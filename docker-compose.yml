@@ -1,0 +1,51 @@
+services:
+  mysql:
+    image: mysql:8.0
+    command: ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--binlog-row-image=FULL"]
+    environment:
+      MYSQL_ROOT_PASSWORD: p7d_local_only_123
+    networks: [p7d]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 24
+  starrocks:
+    image: starrocks/allin1-ubuntu:3.5.10
+    networks: [p7d]
+  jobmanager:
+    image: flink:1.20.0-scala_2.12-java17
+    command: jobmanager
+    ports: ["127.0.0.1:8081:8081"]
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        execution.checkpointing.interval: 3000
+        state.checkpoints.dir: file:///opt/flink/state/checkpoints
+        restart-strategy.type: fixed-delay
+        restart-strategy.fixed-delay.attempts: 5
+        restart-strategy.fixed-delay.delay: 3s
+    volumes:
+      - ./runtime/cdc:/opt/flink-cdc:ro
+      - flinkstate:/opt/flink/state
+    networks: [p7d]
+  taskmanager:
+    image: flink:1.20.0-scala_2.12-java17
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 4
+        execution.checkpointing.interval: 3000
+        state.checkpoints.dir: file:///opt/flink/state/checkpoints
+        restart-strategy.type: fixed-delay
+        restart-strategy.fixed-delay.attempts: 5
+        restart-strategy.fixed-delay.delay: 3s
+    volumes:
+      - ./runtime/cdc:/opt/flink-cdc:ro
+      - flinkstate:/opt/flink/state
+    networks: [p7d]
+networks:
+  p7d: {}
+volumes:
+  flinkstate: {}

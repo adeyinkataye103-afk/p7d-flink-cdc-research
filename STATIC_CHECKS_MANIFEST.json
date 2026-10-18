@@ -1,0 +1,13 @@
+{
+  "verification": "STATIC_CHECKS_ONLY_NO_REAL_CDC_EXECUTION",
+  "timestamp": "2026-10-18",
+  "files": {
+    "docker-compose.yml": "408dc1ced04dd6c43a32979cb2c9281815d1e88a5b01c7a2bed57ef49b4bc00e",
+    "README.md": "8676c8e127a214604b5e9d402988fdef23871bb6e04dea7333682fc8c8b8cdbb",
+    "scripts/bootstrap.sh": "2fd9ffc4999c67b264ee21167fbd74ef24d18df051bb09eb259b2af9ceb75d1b",
+    "scripts/run_cases.py": "41701d79e7698234d2f7c4b03b34898856de91c1d760a4fb593f91862989c5c0",
+    "scripts/start.sh": "3b58f7ea39b621863dff00054078323be17409685b36070fcefb36f728fdeee7",
+    "scripts/collect.sh": "f8b8bb88c1a792635c8a90ca49e6f312eb7239c8d84ff84d9ac04019ecb6b350",
+    ".github/workflows/p7d-real-integration.yml": "2772bb0297c19b5f40aa9e64bbb8388712f048ffac0356dd868939d65d97babe"
+  }
+}
