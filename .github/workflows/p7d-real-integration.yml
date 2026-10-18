@@ -1,0 +1,48 @@
+
+name: P7D Flink CDC 3.7.0 MySQL-StarRocks reproduction
+
+on:
+  workflow_dispatch:
+    inputs:
+      independent_runs_per_mode:
+        description: "1 smoke run or 10 independent cold-start runs per mode"
+        type: choice
+        options: ['1', '10']
+        default: '1'
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        mode: [normal, restart]
+        repetition: ${{ fromJSON(inputs.independent_runs_per_mode == '10' && '[1,2,3,4,5,6,7,8,9,10]' || '[1]') }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Environment and source download
+        run: bash scripts/bootstrap.sh
+
+      - name: Start real services and CDC job
+        run: bash scripts/start.sh
+
+      - name: Execute lifecycle and negative-control cases
+        run: python3 scripts/run_cases.py --mode "${{ matrix.mode }}"
+
+      - name: Preserve raw infrastructure evidence
+        if: always()
+        run: bash scripts/collect.sh
+
+      - name: Upload evidence even on setup failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P7D-CDC37-${{ matrix.mode }}-${{ matrix.repetition }}
+          path: runtime/out/
+          retention-days: 14
