@@ -30,7 +30,11 @@ jobs:
         run: bash scripts/bootstrap.sh
 
       - name: Start real services and CDC job
-        run: bash scripts/start.sh
+        run: |
+          mkdir -p runtime/cdc/log
+          chmod 0777 runtime/cdc/log
+          sed -i 's#:/opt/flink-cdc:ro#:/opt/flink-cdc:rw#g' docker-compose.yml
+          bash scripts/start.sh
 
       - name: Execute lifecycle and negative-control cases
         run: python3 scripts/run_cases.py --mode "${{ matrix.mode }}"
