@@ -32,21 +32,23 @@ done
 curl -fsSL --retry 3 "${MAVEN}/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar" -o runtime/cdc/lib/mysql-connector-java-8.0.27.jar
 sha256sum runtime/cdc/lib/* >> runtime/out/release_checksums.txt
 cat > runtime/cdc/pipeline.yaml <<'YAML'
+
+
 source:
   type: mysql
   hostname: mysql
   port: 3306
   username: root
   password: p7d_local_only_123
-  tables: flink.orders_.*
-  server-id: 5100-5104
-  scan.startup.mode: initial
-   server-id: 5100-5104
-  jdbc.properties.allowPublicKeyRetrieval: "true"
+  tables: 'flink.orders_.*'
+  server-id: '5100-5104'
+  jdbc.properties.allowPublicKeyRetrieval: 'true'
   scan.startup.mode: initial
   scan.newly-added-table.enabled: false
   scan.binlog.newly-added-table.enabled: true
   server-time-zone: UTC
+
+
 sink:
   type: starrocks
   name: StarRocks Sink
