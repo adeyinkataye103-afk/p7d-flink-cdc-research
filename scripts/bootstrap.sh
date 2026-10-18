@@ -41,6 +41,9 @@ source:
   tables: flink.orders_.*
   server-id: 5100-5104
   scan.startup.mode: initial
+   server-id: 5100-5104
+  jdbc.properties.allowPublicKeyRetrieval: "true"
+  scan.startup.mode: initial
   scan.newly-added-table.enabled: false
   scan.binlog.newly-added-table.enabled: true
   server-time-zone: UTC
